@@ -1,0 +1,78 @@
+-- Use the target database
+USE APIdattabase;
+
+-- Create table for employees
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY IDENTITY(1,1),
+    Title VARCHAR(50),
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Phone VARCHAR(20),
+    Email VARCHAR(255),
+    CompanyID INT,
+    DivisionID INT,
+    ProjectID INT,
+    DepartmentID INT
+);
+
+-- Create table for companies
+CREATE TABLE Company (
+    CompanyID INT PRIMARY KEY IDENTITY(1,1),
+    Code VARCHAR(50) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    LeaderID INT
+);
+
+-- Create table for divisions
+CREATE TABLE Division (
+    DivisionID INT PRIMARY KEY IDENTITY(1,1),
+    Code VARCHAR(50) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    LeaderID INT,
+    CompanyID INT
+);
+
+-- Create table for projects
+CREATE TABLE Project (
+    ProjectID INT PRIMARY KEY IDENTITY(1,1),
+    Code VARCHAR(50) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    LeaderID INT,
+    DivisionID INT
+);
+
+-- Create table for departments
+CREATE TABLE Department (
+    DepartmentID INT PRIMARY KEY IDENTITY(1,1),
+    Code VARCHAR(50) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    LeaderID INT,
+    ProjectID INT
+);
+
+ALTER TABLE Employees
+    ADD CONSTRAINT FK_Employees_Company FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID) ON DELETE SET NULL;
+ALTER TABLE Employees
+    ADD CONSTRAINT FK_Employees_Division FOREIGN KEY (DivisionID) REFERENCES Division(DivisionID) ON DELETE SET NULL;
+ALTER TABLE Employees
+    ADD CONSTRAINT FK_Employees_Project FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID) ON DELETE SET NULL;
+ALTER TABLE Employees
+    ADD CONSTRAINT FK_Employees_Department FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID) ON DELETE SET NULL;
+
+ALTER TABLE Company
+    ADD CONSTRAINT FK_Company_Leader FOREIGN KEY (LeaderID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL;
+
+ALTER TABLE Division
+    ADD CONSTRAINT FK_Division_Leader FOREIGN KEY (LeaderID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL;
+ALTER TABLE Division
+    ADD CONSTRAINT FK_Division_Company FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID) ON DELETE NO ACTION;
+
+ALTER TABLE Project
+    ADD CONSTRAINT FK_Project_Leader FOREIGN KEY (LeaderID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL;
+ALTER TABLE Project
+    ADD CONSTRAINT FK_Project_Division FOREIGN KEY (DivisionID) REFERENCES Division(DivisionID) ON DELETE NO ACTION;
+
+ALTER TABLE Department
+    ADD CONSTRAINT FK_Department_Leader FOREIGN KEY (LeaderID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL;
+ALTER TABLE Department
+    ADD CONSTRAINT FK_Department_Project FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID) ON DELETE NO ACTION;
